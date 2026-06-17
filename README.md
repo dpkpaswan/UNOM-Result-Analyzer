@@ -15,7 +15,7 @@ A full-stack web application to scrape, analyze, and compare Madras University (
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|------------|
 | Frontend | React + Vite |
 | Backend | Python FastAPI |
 | Database | Supabase (PostgreSQL) |
@@ -26,8 +26,8 @@ A full-stack web application to scrape, analyze, and compare Madras University (
 
 ### 1. Supabase
 
-- Create a Supabase project
-- Run `backend/setup.sql` in the SQL Editor
+- Create a [Supabase](https://supabase.com) project
+- Run `backend/setup.sql` in the SQL Editor to create tables and RLS policies
 - Create an admin user in Supabase Auth dashboard
 
 ### 2. Backend
@@ -40,6 +40,18 @@ pip install -r requirements.txt
 python main.py
 ```
 
+#### Environment Variables
+
+Create a `.env` file in the `backend/` directory (see `.env.example`):
+
+```env
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_KEY=your-service-role-key-here
+```
+
+> ⚠️ **Never commit your `.env` file.** The `.gitignore` is configured to exclude it.
+
 ### 3. Frontend
 
 ```bash
@@ -48,19 +60,64 @@ npm install
 npm run dev
 ```
 
+The frontend connects to the backend API. Set the `VITE_API_URL` environment variable if your backend runs on a different host:
+
+```bash
+# Optional: defaults to http://localhost:10000
+VITE_API_URL=https://your-backend-url.com
+```
+
 ### 4. CSV Format
 
-```
+Upload a CSV file with the following format:
+
+```csv
 regno,dob,name
-422400294,12/10/2005,DEEPAK PASWAN
+123456789,01/01/2000,STUDENT NAME
+987654321,15/06/2001,ANOTHER STUDENT
 ```
 
-## Test Accounts
+| Column | Description | Example |
+|--------|-------------|---------|
+| `regno` | Student register number | `123456789` |
+| `dob` | Date of birth (DD/MM/YYYY) | `01/01/2000` |
+| `name` | Student full name | `STUDENT NAME` |
+
+See [`sample.csv`](sample.csv) for a working example.
+
+## Default Accounts
+
+After running `backend/create_admin.py`, you can create accounts via the Admin Panel:
 
 | Username | Password | Role | Department |
 |----------|----------|------|------------|
-| admin | admin123 | admin | admin |
-| deepak | deepak123 | teacher | BCA |
+| `your_admin` | `your_password` | admin | admin |
+| `teacher1` | `teacher_pass` | teacher | BCA |
+
+> 🔒 **Change default passwords immediately after first login.**
+
+## Project Structure
+
+```
+├── backend/
+│   ├── main.py              # FastAPI server
+│   ├── auth.py              # Auth middleware
+│   ├── scraper.py           # UNOM result scraper
+│   ├── supabase_client.py   # Supabase client factory
+│   ├── create_admin.py      # Admin account setup
+│   ├── setup.sql            # Database schema & RLS
+│   ├── requirements.txt     # Python dependencies
+│   └── .env.example         # Environment template
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   ├── context/         # Auth context
+│   │   ├── App.jsx          # Main app
+│   │   └── index.css        # Global styles
+│   └── index.html           # Entry point
+├── sample.csv               # Example CSV upload
+└── README.md
+```
 
 ## License
 
